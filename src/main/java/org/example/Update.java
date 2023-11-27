@@ -22,7 +22,7 @@ public class Update {
             String contraseña = "sebastian2810";
             conexion = DriverManager.getConnection(url, usuario, contraseña);
 
-            // Paso 1: Obtener el puntaje actual
+
             String obtenerPuntajeSQL = "SELECT Puntacion FROM firsttable  WHERE ID = ?";
             obtenerPuntaje = conexion.prepareStatement(obtenerPuntajeSQL);
             String obtenerNivelSQL = "SELECT NivelMax FROM firsttable  WHERE ID = ?";
@@ -42,11 +42,11 @@ public class Update {
                 Nivelactual = resultadoNivel.getInt("NivelMax");
             }
 
-            // Paso 2: Comparar con el nuevo puntaje
-            int nuevoPuntaje = puntaje; // Aquí colocas tu nuevo puntaje
+
+            int nuevoPuntaje = puntaje;
             int NivelNuevo= nivel;
             if (NivelNuevo > Nivelactual) {
-                // Paso 3: Actualizar si el nuevo puntaje es mayor
+
                 String actualizarPuntajeSQL = "UPDATE firsttable SET Puntacion = ? WHERE ID = ?";
                 String actualizarNivelSQL = "UPDATE firsttable SET NivelMax = ? WHERE ID = ?";
                 actualizarPuntaje = conexion.prepareStatement(actualizarPuntajeSQL);
