@@ -21,6 +21,8 @@ public class NewPlayerFirst extends JFrame{
     private JButton Guardar;
     private JButton Atras;
 
+    private  JButton BotonJugar;
+
     private TextField Nombre;
 
     private JLabel IDtuyo;
@@ -46,6 +48,7 @@ public class NewPlayerFirst extends JFrame{
 
         Jugar = new JButton("Nuevo Jugador");
         Atras=new JButton("Atras");
+        BotonJugar= new JButton("Jugar");
 
         Guardar= new JButton("Guardar");
 
@@ -58,6 +61,8 @@ public class NewPlayerFirst extends JFrame{
         label.add(Jugar);
         label.add(Guardar);
         label.add(Atras);
+        label.add(BotonJugar);
+        BotonJugar.setEnabled(false);
 
         Guardar.addActionListener(
                 new ActionListener() {
@@ -94,6 +99,15 @@ public class NewPlayerFirst extends JFrame{
                             statement.executeUpdate();
 
                             System.out.println("Registro agregado correctamente.");
+                            JOptionPane.showMessageDialog(label,
+                                    "ATENCION!!!!: En la parte inferior izquierda encontraras tu ID único,\n" +
+                                    " será tu contraseña para cuando quieras volver a jugar. Por favor guárdalo en un lugar seguro.\n" +
+                                    "\n" +
+                                    "-Cristiano Ronaldo\n");
+
+                            BotonJugar.setEnabled(true);
+
+
 
                             conexion.close();
                         } catch (SQLException e) {
@@ -117,12 +131,26 @@ public class NewPlayerFirst extends JFrame{
         ImagenNombre.setBounds(110, 90, INombre.getIconWidth(), INombre.getIconHeight());
         Guardar.setBounds(250,200,Guardar.getPreferredSize().width, 38);
         Atras.setBounds(460,300,Atras.getPreferredSize().width, 38);
+        BotonJugar.setBounds(370,300,BotonJugar.getPreferredSize().width, 38);
 
         Atras.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evA) {
                         new PrimaryInterface();
+                        dispose();
+
+                    }
+                }
+        );
+
+
+
+        BotonJugar.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evJugar) {
+                        new Play(NombreJugador,IDNUMERAL);
                         dispose();
 
                     }

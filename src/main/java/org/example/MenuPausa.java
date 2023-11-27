@@ -1,18 +1,19 @@
 package org.example;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JFrame;
 
 
-public class PrimaryInterface extends JFrame {
+public class MenuPausa extends JFrame {
 
-    private JButton Jugar;
-    private JButton ID;
+    private Play instanciaPlay;
+
+    private JButton VolverJuego;
+    private JButton Salir;
+    private JButton RecordarId;
+
     private ImageIcon wallpapper;
     private ImageIcon Logo;
     private JLabel label;
@@ -29,11 +30,7 @@ public class PrimaryInterface extends JFrame {
     int mouseX;
     int mouseY;
 
-    boolean callar= false;
-    private Clip clip; // Referencia al Clip actual
-
-    public  PrimaryInterface () {
-        ReproducirSonido("C:\\Users\\chevi\\Downloads\\videoplayback (2) (mp3cut.net).wav",callar);
+    public MenuPausa (String nombre, int ID) {
         setLayout(new BorderLayout()); //cogeTodoElcomponente
         wallpapper= new ImageIcon("C:\\Users\\chevi\\Downloads\\Fondo-Futbol.jpg");
         Logo = new ImageIcon("C:\\Users\\chevi\\Downloads\\LogoFutbol.png");
@@ -53,36 +50,39 @@ public class PrimaryInterface extends JFrame {
         RankingSemanal.setBounds(440,320,100,20);
 
         label.setLayout(null);
-        setTitle("Interfaz Primaria");
+        setTitle("Pausa");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setVisible(true);
 
 
-        Jugar = new JButton("Nuevo Jugador");
-        ID= new JButton("Tengo un ID");
+        VolverJuego = new JButton("Reiniciar partida");
+        Salir= new JButton("Salir del juego");
+        RecordarId= new JButton("Recordar ID");
 
 
-        Jugar.addActionListener(
+        VolverJuego.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("¡Se hizo clic en el botón!");
-                        callar = true;
-                        detenerReproduccion();
-                        new NewPlayerFirst();
+                        System.out.println("Reiniciar partida");
+                        new Play(nombre,ID);
                         dispose();
+
                     }
                 }
-                );
-        ID.addActionListener(
+        );
+        Salir.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent ID) {
                         System.out.println("¡Se hizo clic en el botón ID");
-                        callar = true;
-                        detenerReproduccion();
-                        new IDlogin();
+                        if (instanciaPlay != null) {
+                            instanciaPlay.cerrarJuego();
+                        }
+
                         dispose();
+                        new PrimaryInterface();
+
 
 
                     }
@@ -95,6 +95,8 @@ public class PrimaryInterface extends JFrame {
                 System.out.println("¡Se hizo clic en el texto!");
                 new MostrarPuntaje();
 
+
+
             }
         });
         RankingMensual.addMouseListener(new MouseAdapter() {
@@ -106,15 +108,26 @@ public class PrimaryInterface extends JFrame {
         });
         RankingSemanal.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e3) {
-                System.out.println("¡Se hizo clic en el texto diario!");
+                System.out.println("¡Se hizo clic en el texto Diario!");
                 new MostrarRankingDiario();
             }
         });
+
+        RecordarId.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent eid) {
+                System.out.println("¡Se hizo clic en RECORDAR ID!");
+                JOptionPane.showMessageDialog(label, "Que paso pibe, aqui esta tu ID campeon : "+ ID +"\n" +
+                        "-Messi");
+
+            }
+        });
+
+        label.add(VolverJuego);
+        label.add(Salir);
+        label.add(RecordarId);
         label.add(RankingGlobal);
         label.add(RankingMensual);
         label.add(RankingSemanal);
-        label.add(Jugar);
-        label.add(ID);
 
 
         botonX= 150;
@@ -123,14 +136,14 @@ public class PrimaryInterface extends JFrame {
         BotonID_Y= botonY;
 
 
-        Jugar.setBounds(botonX, botonY, Jugar.getPreferredSize().width, 38);
-        ID.setBounds(BotonID_X, BotonID_Y, ID.getPreferredSize().width, 38);
+        VolverJuego.setBounds(botonX, botonY, VolverJuego.getPreferredSize().width, 38);
+        Salir.setBounds(BotonID_X, BotonID_Y, Salir.getPreferredSize().width, 38);
+        RecordarId.setBounds(260,250 , RecordarId.getPreferredSize().width, 38);
 
         addMouseListener(new MyMouseListener());
 
-
-
     }
+
     private class MyMouseListener implements MouseListener { //se implementa de la interfaz MouseListener con sus metodos
 
         @Override
@@ -147,40 +160,6 @@ public class PrimaryInterface extends JFrame {
         @Override public void mouseEntered(MouseEvent evt) { }
         @Override public void mouseExited(MouseEvent evt) { }
     }
-
-    private void ReproducirSonido(String nombreSonido, boolean cerrar) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(nombreSonido).getAbsoluteFile());
-
-
-            if (clip != null && clip.isOpen()) {
-                clip.close();
-            }
-
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-
-            if (cerrar) {
-
-                clip.addLineListener(event -> {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clip.close();
-                    }
-                });
-            }
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-            System.out.println("Error al reproducir el sonido.");
-        }
-    }
-    private void detenerReproduccion() {
-        if (clip != null && clip.isRunning()) {
-            clip.stop();
-        }
-    }
 }
-
-
-
 
 

@@ -37,12 +37,10 @@ public class IDlogin extends JFrame{
     public IDlogin(){
         setLayout(new BorderLayout()); //cogeTodoElcomponente
         wallpapper= new ImageIcon("C:\\Users\\chevi\\Downloads\\Fondo-Futbol.jpg");
-        INombre= new ImageIcon("C:\\Users\\chevi\\Downloads\\Nombre.png");
+        INombre= new ImageIcon("C:\\Users\\chevi\\Downloads\\id ingresalo (2).png");
         label = new JLabel(wallpapper);
         ImagenNombre= new JLabel(INombre);
         add(label);
-
-
 
 
 
@@ -62,6 +60,10 @@ public class IDlogin extends JFrame{
         label.add(ImagenNombre);
         label.add(loginn);
         label.add(Atras);
+
+
+
+
 
         loginn.addActionListener(
                 new ActionListener() {
@@ -89,28 +91,30 @@ public class IDlogin extends JFrame{
                                     Connection conexion = DriverManager.getConnection(url, usuario, contraseña);
 
                                     // Input del usuario
-                                    int idUsuario = IDD; // ID ingresado por el usuario
+                                    int idUsuario = IDD;
 
-                                    // Consulta SQL
+
                                     String consulta = "SELECT * FROM firsttable WHERE ID=?";
                                     PreparedStatement statement = conexion.prepareStatement(consulta);
                                     statement.setInt(1, idUsuario);
 
-                                    // Ejecutar la consulta
+
                                     ResultSet resultado = statement.executeQuery();
 
                                     // Verificar si el usuario existe
                                     if (resultado.next()) {
                                         System.out.println("Login exitoso");
                                         loginn.setEnabled(false);
-
-                                        new Play(IDD);
+                                        String nombreUsuario = resultado.getString("Nombre");
+                                        new Play(nombreUsuario,IDD);
                                         dispose();
+
                                     } else {
                                         System.out.println("ID de usuario incorrecto");
+                                        JOptionPane.showMessageDialog(label, "Usuario Incorrecto, Intenta nuevamente");
                                     }
 
-                                    // Cerrar la conexión
+
                                     conexion.close();
 
                                 } catch (SQLException e) {
@@ -160,6 +164,7 @@ public class IDlogin extends JFrame{
     public int getIDD(){
         return IDD;
     }
+
 
 
 

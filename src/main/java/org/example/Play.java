@@ -1,4 +1,6 @@
 package org.example;
+import javax.sound.sampled.*;
+
 import java.util.Random;
 import javax.management.relation.RelationNotFoundException;
 import javax.swing.*;
@@ -6,10 +8,16 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Play extends JFrame  {
 
-    IDlogin Instanciaa= new IDlogin();
+
+    private IDlogin instanciaLogin;
+
 
 
 
@@ -33,6 +41,8 @@ public class Play extends JFrame  {
     private int IDNUMERO;
 
     private JButton patear;
+    private JButton Menu;
+
 
     private ImageIcon Balon;
     private ImageIcon ArqueroI;
@@ -63,7 +73,8 @@ public class Play extends JFrame  {
 
 
 
-    public Play(int IDD){
+    public Play(String NombreJugador, int IDD){
+
         setLayout(new BorderLayout()); //cogeTodoElcomponente
         wallpapper= new ImageIcon("C:\\Users\\chevi\\Downloads\\Fondo-Futbol.jpg");
         label = new JLabel(wallpapper);
@@ -71,6 +82,9 @@ public class Play extends JFrame  {
 
         patear= new JButton("Patear");
         label.add(patear);
+
+        Menu= new JButton("Menu");
+        label.add(Menu);
 
         Balon= new ImageIcon("C:\\Users\\chevi\\Downloads\\Balon (1).png");
         Balonn= new JLabel(Balon);
@@ -129,6 +143,7 @@ public class Play extends JFrame  {
 
 
         patear.setBounds(450,290,patear.getPreferredSize().width,38);
+        Menu.setBounds(510,20,Menu.getPreferredSize().width,38);
         Balonn.setBounds(280,290,Balon.getIconWidth(), Balon.getIconHeight());
         ArcoC.setBounds(230,120,ArqueroC.getIconWidth(), ArqueroC.getIconHeight());
 
@@ -154,12 +169,30 @@ public class Play extends JFrame  {
                         }catch (Exception e){
                             System.out.println("E");
                         }
+                        ReproducirSonido("C:\\Users\\chevi\\Downloads\\cartoon022.wav");
+
                     }
                 }
         );
 
+
+        Menu.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent Menu) {
+                        System.out.println("¡Se hizo clic en el botón Menu!");
+                       new MenuPausa(NombreJugador,IDD);
+                       setVisible(false);
+
+
+                    }
+                }
+        );
+
+
+
+
         IDNUMERO= IDD;
-        IdJugador.setText(IDNUMERO+"");
+        IdJugador.setText(NombreJugador+"");
 
 
 
@@ -180,6 +213,25 @@ public class Play extends JFrame  {
         g.drawRect(Ax, Ay, Nivel*10, Nivel*10);
      }
 
+    public void ReproducirSonido(String nombreSonido){
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(nombreSonido).getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch(UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            System.out.println("Error al reproducir el sonido.");
+        }
+    }
+
+
+
+
+
+    public void cerrarJuego() {
+        this.dispose();
+    }
+
     private class MyMouseListener extends JFrame implements MouseListener {
 
         @Override
@@ -196,6 +248,7 @@ public class Play extends JFrame  {
             ArcoD.setBounds(-1500,-1200,ArqueroD.getIconWidth(), ArqueroD.getIconHeight());
             ArcoIT.setBounds(-1500,-1200,ArqueroTI.getIconWidth(), ArqueroTI.getIconHeight());
             ArcoDT.setBounds(-1500,-1200,ArqueroTD.getIconWidth(), ArqueroTD.getIconHeight());
+            ReproducirSonido("C:\\Users\\chevi\\Downloads\\arbitro-futbol-.wav");
         }
 
         // No se usan pero deben ser escritos
@@ -290,13 +343,10 @@ public class Play extends JFrame  {
                 repaint();
                 java.sql.Date fechaActualizada = new java.sql.Date(new java.util.Date().getTime());
                 new Update(Nivel,PuntosHechos,IDNUMERO,fechaActualizada);
+                ReproducirSonido("C:\\Users\\chevi\\Downloads\\gol-riquelme (mp3cut.net).wav");
 
             }else {
-                Nivel=1;
-                PuntosHechos= 0;
-                Level.setText(Nivel+"");
-                Puntaje.setText(PuntosHechos+"");
-
+                ReproducirSonido("C:\\Users\\chevi\\Downloads\\videoplayback-_1_-_mp3cut.net_.wav");
                 System.out.println("La tapo el arquero");
                 ArcoC.setBounds(-2030,-1200,ArqueroC.getIconWidth(), ArqueroC.getIconHeight());
                 Balonn.setBounds(-2300,-2300,Balon.getIconWidth(), Balon.getIconHeight());
@@ -307,17 +357,63 @@ public class Play extends JFrame  {
                     ArcoDT.setBounds(CoordXPatear-200,CoordYPatear-50,ArqueroTD.getIconWidth(), ArqueroTD.getIconHeight());
                 }
 
-                Arquero();
-                repaint();
+
+
+
+
+                Timer timer = new Timer(1000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ReproducirSonido("C:\\Users\\chevi\\Downloads\\mario-kart-perdiste-perder-loser.wav");
+                        JOptionPane.showMessageDialog(label, "Esta vez no fue campeón, pero pronto seremos\n" +
+                                "reyes del futchibol \n" +
+                                "-Neymar\n" + "\n" +
+                                "Tus estadísticas : \n" +
+                                "Nivel :" + Nivel + "\n" +
+                                "Puntaje :" + PuntosHechos + "\n"
+                        );
+                        Arquero();
+                        repaint();
+                        Nivel=1;
+                        PuntosHechos= 0;
+                        Level.setText(Nivel+"");
+                        Puntaje.setText(PuntosHechos+"");
+                    }
+                });
+
+                timer.setRepeats(false);
+                timer.start();
+
+
+
             }
         }else {
-            Nivel=1;
-            Level.setText(Nivel+"");
-            PuntosHechos= 0;
-            Puntaje.setText(PuntosHechos+"");
+
             System.out.println("Afuera Fallaste");
             Arquero();
             repaint();
+            Timer timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ReproducirSonido("C:\\Users\\chevi\\Downloads\\mario-kart-perdiste-perder-loser.wav");
+                    JOptionPane.showMessageDialog(label, "Esta vez no fue campeón, pero pronto seremos\n" +
+                            "reyes del futchibol \n" +
+                            "-Neymar\n" + "\n" +
+                            "Tus estadísticas : \n" +
+                            "Nivel :" + Nivel + "\n" +
+                            "Puntaje :" + PuntosHechos + "\n"
+                    );
+                    Nivel=1;
+                    PuntosHechos= 0;
+                    Level.setText(Nivel+"");
+                    Puntaje.setText(PuntosHechos+"");
+                }
+            });
+
+            timer.setRepeats(false); // Establece que el temporizador no se repita
+            timer.start(); // Inicia el temporizador
+
+
         }
     }
 
